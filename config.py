@@ -142,6 +142,7 @@ X_ACCOUNTS = [
 # ============ 数据存储配置 ============
 DATA_DIR = "data"  # 数据存储目录
 RETENTION_DAYS = 7  # 数据保留天数（延长至一周，方便沉淀获客线索）
+MAX_POST_AGE_DAYS = 3  # 只收集最近 N 天内发布的帖子
 
 # ============ 定时任务配置 ============
 COLLECT_INTERVAL_HOURS = 1  # 收集间隔（小时）

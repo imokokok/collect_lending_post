@@ -5,7 +5,8 @@ import json
 import time
 import requests
 from datetime import datetime, timezone
-from config import X_ACCOUNTS, KEYWORDS, HIGH_INTENT_KEYWORDS, MIN_RELEVANCE_SCORE
+from config import X_ACCOUNTS, KEYWORDS, HIGH_INTENT_KEYWORDS, MIN_RELEVANCE_SCORE, MAX_POST_AGE_DAYS
+from storage import filter_recent_posts
 
 
 def _fetch_timeline(screen_name):
@@ -130,10 +131,12 @@ def collect():
     all_posts = []
     seen_ids = set()
     skipped_count = 0
+    old_count = 0
 
     for screen_name in X_ACCOUNTS:
         print(f"[X] 获取 @{screen_name} 的 Timeline...")
         entries = _fetch_timeline(screen_name)
+        account_posts = []
 
         for entry in entries:
             if entry.get("type") != "tweet":
@@ -143,7 +146,13 @@ def collect():
             if not post or post["id"] in seen_ids:
                 continue
             seen_ids.add(post["id"])
+            account_posts.append(post)
 
+        # 过滤 3 天前发布的推文
+        recent_posts = filter_recent_posts(account_posts, MAX_POST_AGE_DAYS)
+        old_count += len(account_posts) - len(recent_posts)
+
+        for post in recent_posts:
             score, high_hits, normal_hits = _score_relevance(post["text"])
             if score < MIN_RELEVANCE_SCORE:
                 skipped_count += 1
@@ -161,5 +170,5 @@ def collect():
     # 按相关性和互动量综合排序
     all_posts.sort(key=lambda p: (p.get("relevance_score", 0), p.get("likes", 0)), reverse=True)
 
-    print(f"[X] 共收集 {len(all_posts)} 条高相关推文（过滤掉 {skipped_count} 条低相关）")
+    print(f"[X] 共收集 {len(all_posts)} 条高相关推文（过滤掉 {skipped_count} 条低相关，{old_count} 条超过 {MAX_POST_AGE_DAYS} 天）")
     return all_posts

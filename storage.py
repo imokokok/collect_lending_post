@@ -9,6 +9,37 @@ from pathlib import Path
 from config import DATA_DIR, RETENTION_DAYS
 
 
+def _parse_created_at(created_at):
+    """解析帖子发布时间，支持 ISO 格式、时间戳和 Twitter 格式"""
+    if not created_at:
+        return None
+    if isinstance(created_at, (int, float)):
+        return datetime.fromtimestamp(created_at, tz=timezone.utc)
+    s = str(created_at).strip()
+    # ISO 格式（如 2024-02-20T14:35:00+00:00）
+    try:
+        return datetime.fromisoformat(s.replace("Z", "+00:00"))
+    except ValueError:
+        pass
+    # Twitter 格式（如 Wed Oct 12 12:00:00 +0000 2022）
+    try:
+        return datetime.strptime(s, "%a %b %d %H:%M:%S %z %Y")
+    except ValueError:
+        pass
+    return None
+
+
+def filter_recent_posts(posts, days):
+    """只保留最近 N 天内发布的帖子"""
+    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+    recent = []
+    for post in posts:
+        dt = _parse_created_at(post.get("created_at"))
+        if dt and dt >= cutoff:
+            recent.append(post)
+    return recent
+
+
 def _ensure_data_dir():
     """确保数据目录存在"""
     Path(DATA_DIR).mkdir(parents=True, exist_ok=True)

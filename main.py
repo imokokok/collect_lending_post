@@ -7,7 +7,7 @@ import time
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 
-from config import COLLECT_INTERVAL_HOURS
+from config import COLLECT_INTERVAL_HOURS, MAX_POST_AGE_DAYS
 from collector_x import collect as collect_x
 from collector_binance import collect as collect_binance
 from storage import save_posts, generate_summary, cleanup_old_data
@@ -77,6 +77,7 @@ def main():
     print(f"[Main] 收集间隔: 每 {COLLECT_INTERVAL_HOURS} 小时")
     from config import RETENTION_DAYS
     print(f"[Main] 数据保留: {RETENTION_DAYS} 天")
+    print(f"[Main] 帖子时效: 仅保留最近 {MAX_POST_AGE_DAYS} 天内发布")
     print(f"[Main] X 数据源: Twitter Syndication API (免费)")
     print(f"[Main] 币安广场: Playwright + API (免费)")
     print(f"[Main] 按 Ctrl+C 停止\n")

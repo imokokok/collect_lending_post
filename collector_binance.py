@@ -3,7 +3,8 @@
 import json
 import time
 from datetime import datetime, timezone
-from config import KEYWORDS, HIGH_INTENT_KEYWORDS, MIN_RELEVANCE_SCORE
+from config import KEYWORDS, HIGH_INTENT_KEYWORDS, MIN_RELEVANCE_SCORE, MAX_POST_AGE_DAYS
+from storage import filter_recent_posts
 
 
 # 币安广场搜索关键词（精简为核心高价值词，避免运行时间过长）
@@ -132,6 +133,7 @@ def collect():
     all_posts = []
     seen_ids = set()
     skipped_count = 0
+    old_count = 0
 
     # 只搜索精简后的高价值中文关键词（避免关键词过多导致运行时间过长）
     search_keywords = BINANCE_PRIORITY_KEYWORDS
@@ -214,14 +216,20 @@ def collect():
                 if not search_ok:
                     continue
 
-                new_count = 0
+                keyword_posts = []
                 for vo in buzz_items:
                     post_id = str(vo.get("id", ""))
                     if not post_id or post_id in seen_ids:
                         continue
                     seen_ids.add(post_id)
+                    keyword_posts.append(_format_post(vo, keyword))
 
-                    post = _format_post(vo, keyword)
+                # 过滤 3 天前发布的帖子
+                recent_posts = filter_recent_posts(keyword_posts, MAX_POST_AGE_DAYS)
+                old_count += len(keyword_posts) - len(recent_posts)
+
+                new_count = 0
+                for post in recent_posts:
                     if post["relevance_score"] < MIN_RELEVANCE_SCORE:
                         skipped_count += 1
                         continue
@@ -241,5 +249,5 @@ def collect():
     # 按相关性和互动量综合排序
     all_posts.sort(key=lambda p: (p.get("relevance_score", 0), p.get("likes", 0)), reverse=True)
 
-    print(f"[Binance] 共收集 {len(all_posts)} 条高相关帖子（过滤掉 {skipped_count} 条低相关）")
+    print(f"[Binance] 共收集 {len(all_posts)} 条高相关帖子（过滤掉 {skipped_count} 条低相关，{old_count} 条超过 {MAX_POST_AGE_DAYS} 天）")
     return all_posts
