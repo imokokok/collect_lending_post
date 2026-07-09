@@ -16,17 +16,24 @@ def _parse_created_at(created_at):
     if isinstance(created_at, (int, float)):
         return datetime.fromtimestamp(created_at, tz=timezone.utc)
     s = str(created_at).strip()
+    dt = None
     # ISO 格式（如 2024-02-20T14:35:00+00:00）
     try:
-        return datetime.fromisoformat(s.replace("Z", "+00:00"))
+        dt = datetime.fromisoformat(s.replace("Z", "+00:00"))
     except ValueError:
         pass
     # Twitter 格式（如 Wed Oct 12 12:00:00 +0000 2022）
-    try:
-        return datetime.strptime(s, "%a %b %d %H:%M:%S %z %Y")
-    except ValueError:
-        pass
-    return None
+    if dt is None:
+        try:
+            dt = datetime.strptime(s, "%a %b %d %H:%M:%S %z %Y")
+        except ValueError:
+            pass
+    if dt is None:
+        return None
+    # 确保带时区，避免与 aware 的 cutoff 比较时报错
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt
 
 
 def filter_recent_posts(posts, days):

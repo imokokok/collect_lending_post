@@ -94,7 +94,17 @@ def _format_post(vo, keyword):
     summary = content[:300] + "..." if len(content) > 300 else content
     author = vo.get("authorName", "")
 
-    release_date = vo.get("releaseDate", 0) or vo.get("createTime", 0)
+    # 币安广场 `date` 字段是秒级时间戳；旧的 releaseDate/createTime 是毫秒级
+    date_seconds = vo.get("date", 0)
+    release_ms = vo.get("releaseDate", 0)
+    create_ms = vo.get("createTime", 0)
+    created_timestamp = None
+    if date_seconds:
+        created_timestamp = date_seconds
+    elif release_ms:
+        created_timestamp = release_ms / 1000
+    elif create_ms:
+        created_timestamp = create_ms / 1000
 
     stats = vo.get("stats", {}) or {}
     likes = stats.get("likeCount", 0) or vo.get("likeCount", 0)
@@ -112,7 +122,7 @@ def _format_post(vo, keyword):
         "title": title,
         "text": summary,
         "author": author,
-        "created_at": datetime.fromtimestamp(release_date / 1000, tz=timezone.utc).isoformat() if release_date else "",
+        "created_at": datetime.fromtimestamp(created_timestamp, tz=timezone.utc).isoformat() if created_timestamp else "",
         "likes": likes,
         "comments": comments,
         "shares": shares,
