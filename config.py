@@ -88,7 +88,29 @@ STRATEGY_KEYWORDS = [
     "闪电贷",
 ]
 
-# 5) 中文泛 DeFi 讨论词
+# 5) MEV / OEV（预言机可提取价值，和借贷清算强相关）
+MEV_OEV_KEYWORDS = [
+    "MEV",
+    "OEV",
+    "oracle extractable value",
+    "Oracle MEV",
+    "预言机套利",
+    "清算套利",
+    "liquidation bot",
+    "liquidation bots",
+    "searcher",
+    "searchers",
+    "flashbots",
+    "builder",
+    "block builder",
+    "mev blocker",
+    "MEVBlocker",
+    "cow protocol",
+    "intent",
+    "preconfirmation",
+]
+
+# 6) 中文泛 DeFi 讨论词
 CHINESE_KEYWORDS = [
     "DeFi借贷",
     "抵押借贷",
@@ -99,7 +121,7 @@ CHINESE_KEYWORDS = [
 
 # 聚合所有关键词（去重）
 KEYWORDS = list(dict.fromkeys(
-    PROTOCOL_KEYWORDS + RISK_KEYWORDS + ORACLE_KEYWORDS + STRATEGY_KEYWORDS + CHINESE_KEYWORDS
+    PROTOCOL_KEYWORDS + RISK_KEYWORDS + ORACLE_KEYWORDS + STRATEGY_KEYWORDS + MEV_OEV_KEYWORDS + CHINESE_KEYWORDS
 ))
 
 # ============ 高价值场景词（用于相关性打分） ============
@@ -109,6 +131,8 @@ HIGH_INTENT_KEYWORDS = [
     "collateral", "抵押", "LTV", "HF ", " HF",
     "oracle", "预言机", "价格偏差", "bad debt", "坏账",
     "position", "仓位", "风险管理", "自动平仓", "自动保护",
+    "MEV", "OEV", "oracle extractable value", "预言机套利", "清算套利",
+    "liquidation bot", "searcher", "flashbots", "block builder", "mev blocker",
 ]
 
 # ============ X (Twitter) 关注账号 ============
@@ -132,11 +156,49 @@ X_ACCOUNTS = [
     "LlamaRisk",
     "BlockAnalitica",
 
+    # MEV / OEV / 预言机生态
+    "Flashbots",
+    "libevm",
+    "EigenPhi",
+    "FlashbotsProtect",
+    "MEVBlocker",
+    "MEVwatch",
+    "RelayScan",
+    "RedstoneOracles",
+    "API3DAO",
+    "PythNetwork",
+    "Chainlink",
+    "UMAprotocol",
+
     # 链上数据 / 中文社区
     "Lookonchain",
     "Wublockchain12",
     "Defi_Mochi",
     "DeFi_Cheetah",
+]
+
+# ============ 币安广场搜索关键词 ============
+# 币安广场以中文讨论为主，关键词更贴近中文社区表达习惯
+BINANCE_PRIORITY_KEYWORDS = [
+    "Aave",
+    "Compound",
+    "清算",
+    "爆仓",
+    "健康因子",
+    "健康度",
+    "抵押率",
+    "借贷协议",
+    "DeFi借贷",
+    "杠杆",
+    "预言机",
+    "仓位管理",
+    "风险管理",
+    "稳定币借贷",
+    "MEV",
+    "OEV",
+    "预言机套利",
+    "清算套利",
+    "Flashbots",
 ]
 
 # ============ 数据存储配置 ============

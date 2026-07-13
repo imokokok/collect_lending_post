@@ -3,28 +3,14 @@
 import json
 import time
 from datetime import datetime, timezone
-from config import KEYWORDS, HIGH_INTENT_KEYWORDS, MIN_RELEVANCE_SCORE, MAX_POST_AGE_DAYS
+from config import (
+    KEYWORDS,
+    HIGH_INTENT_KEYWORDS,
+    BINANCE_PRIORITY_KEYWORDS,
+    MIN_RELEVANCE_SCORE,
+    MAX_POST_AGE_DAYS,
+)
 from storage import filter_recent_posts
-
-
-# 币安广场搜索关键词（精简为核心高价值词，避免运行时间过长）
-# 中文社区讨论习惯：用户更多用 "爆仓/清算/杠杆/健康度" 等词
-BINANCE_PRIORITY_KEYWORDS = [
-    "Aave",
-    "Compound",
-    "清算",
-    "爆仓",
-    "健康因子",
-    "健康度",
-    "抵押率",
-    "借贷协议",
-    "DeFi借贷",
-    "杠杆",
-    "预言机",
-    "仓位管理",
-    "风险管理",
-    "稳定币借贷",
-]
 
 
 def _ensure_playwright():

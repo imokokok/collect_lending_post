@@ -95,6 +95,8 @@ def _topic_tags(post):
         tags.append("抵押/仓位")
     if any(k in text for k in ["leverage", "杠杆", "循环贷", "borrowing", "借款", "贷款", "lending strategy", "借贷策略", "deleverage", "去杠杆"]):
         tags.append("杠杆/策略")
+    if any(k in text for k in ["mev", "oev", "oracle extractable value", "预言机套利", "清算套利", "liquidation bot", "searcher", "flashbots", "block builder", "mev blocker", "cow protocol", "preconfirmation", "intent"]):
+        tags.append("MEV/OEV")
     protocols = ["aave", "compound", "makerdao", "spark", "morpho", "radiant", "venus", "justlend", "benqi", "curve", "crvusd", "euler", "silo", "ajna", "kamino", "solend"]
     matched_protocols = [p.upper() for p in protocols if p in text]
     if matched_protocols:
@@ -207,6 +209,7 @@ def generate_summary(posts):
     <button class="btn" data-filter="topic" data-value="预言机/坏账">预言机/坏账</button>
     <button class="btn" data-filter="topic" data-value="抵押/仓位">抵押/仓位</button>
     <button class="btn" data-filter="topic" data-value="杠杆/策略">杠杆/策略</button>
+    <button class="btn" data-filter="topic" data-value="MEV/OEV">MEV/OEV</button>
   </div>
   <div class="control-row">
     <span class="control-label">搜索:</span>
