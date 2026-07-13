@@ -21,6 +21,9 @@ build/
 # 日志
 *.log
 
+# 运行时 PID 文件
+*.pid
+
 # macOS
 .DS_Store
 
